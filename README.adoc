@@ -1,8 +1,10 @@
 = eae
+Equim <https://github.com/Equim-chan[@Equim-chan]>
+:tip-caption: :bulb:
 
 eae is a tiny CLI tool that helps encrypt/decrypt a single file using AEAD ciphers. The key is derived using https://www.tarsnap.com/scrypt/scrypt.pdf[scrypt]. AES256GCM and ChaCha20Poly1305 are supported.
 
-For further documents, please refer to eae(1).
+TIP: For further documents, please refer to eae(1).
 
 == Install
 You can view the https://github.com/Equim-chan/eae/releases[release] page for handy prebuilt binaries.
@@ -10,7 +12,7 @@ You can view the https://github.com/Equim-chan/eae/releases[release] page for ha
 == Build
 To build eae, https://github.com/golang/dep[dep] and https://github.com/josephspurrier/goversioninfo[goversioninfo] are required. If you want to build the manpage, you need http://asciidoctor.org/[asciidoctor] too.
 
-[source,shell]
+[source,bash]
 ----
 $ git clone https://github.com/Equim-chan/eae.git $GOPATH/src/ekyu.moe/eae
 $ cd $GOPATH/src/ekyu.moe/eae
@@ -21,7 +23,7 @@ $ $GOPATH/bin/eae
 
 == Details
 === File format
-image:https://raw.github.com/Equim-chan/eae/master/file_format.png[figure]
+image::https://raw.github.com/Equim-chan/eae/master/file_format.png[figure]
 
 === Nonce counter
 First, we generate a 12-byte cryptographically strong pseudo-random slice as `nonceSeed`, and a slice `counter` of 12-byte zero. When a new chunk is to be processed, `nonce` will be `nonceSeed` XOR `counter`, and then counter will increases itself by 0x1 in little endian. This is implemented in https://github.com/Equim-chan/eae/blob/master/lib/aeadstream/aeadstream.go[lib/aeadstream/aeadstream.go].

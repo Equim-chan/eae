@@ -108,7 +108,7 @@ resource.syso: versioninfo.json icon.ico
 
 man/eae.1: doc/eae.1.adoc
 	mkdir -p man
-	asciidoctor -o - -b manpage $< | sed "s@$(shell date +"%Y-%m-%d")@$(shell date +"%B %Y")@" > $@
+	asciidoctor -o - -b manpage $< | sed "s@$(shell date +"%Y-%m-%d")@$(shell date +"%B %Y")@" | sed 's/\&.br/\.br/' > $@
 
 .PHONY: pack
 pack: $(TITLE)-$(VERSION).tar.xz

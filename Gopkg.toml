@@ -1,0 +1,11 @@
+[[constraint]]
+  name = "ekyu.moe/util"
+  branch = "master"
+
+[[constraint]]
+  name = "golang.org/x/crypto"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/spf13/pflag"
+  version = "1.0.0"

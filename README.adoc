@@ -1,0 +1,31 @@
+= eae
+eae is a tiny CLI tool that helps encrypt/decrypt a single file using AEAD ciphers. The key is derived using https://www.tarsnap.com/scrypt/scrypt.pdf[scrypt]. AES256GCM and ChaCha20Poly1305 are supported.
+
+For further documents, please refer to eae(1).
+
+== Install
+You can view the https://github.com/Equim-chan/eae/releases[release] page for handy prebuilt binaries.
+
+== Build
+To build eae, https://github.com/golang/dep[dep] and https://github.com/josephspurrier/goversioninfo[goversioninfo] are required.
+
+[source,shell]
+----
+$ git clone https://github.com/Equim-chan/eae.git $GOPATH/src/ekyu.moe/eae
+$ cd $GOPATH/src/ekyu.moe/eae
+$ make
+$ make install
+$ $GOPATH/bin/eae
+----
+
+== Details
+=== File format
+image:https://raw.github.com/Equim-chan/eae/master/file_format.svg?sanitize=true[figure]
+
+=== Nonce counter
+First, we generate a 12-byte cryptographically strong pseudo-random slice as `nonceSeed`, and a slice `counter` of 12-byte zero. When a new chunk is to be processed, `nonce` will be `nonceSeed` XOR `counter`, and then counter will increases itself by 0x1 in little endian.
+
+Technically, when chunk size is 256KiB (as in eae), and nonce size is 12 bytes, one single _key_(not _passphrase_) can be used to process at most 2^54 EiB of data.
+
+== License
+https://github.com/Equim-chan/eae/blob/master/LICENSE[Apache-2.0]

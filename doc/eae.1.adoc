@@ -1,0 +1,75 @@
+= eae(1)
+:doctype: manpage
+:man manual: User Commands
+
+== NAME
+eae - encrypt/decrypt a single file using AEAD ciphers.
+
+== SYNOPSIS
+*eae* [__OPTION__]... [__FILE__]
+
+== DESCRIPTION
+eae is a tiny CLI tool that helps encrypt/decrypt a single file using AEAD ciphers. The key is derived using scrypt. AES256GCM and ChaCha20Poly1305 are supported.
+
+With no __FILE__, or when __FILE__ is -, read standard input.
+
+*-a*, *--algorithm*
+    Select algorithm to use, only valid under encrypt mode, as decryption
+    detects the algorithm automatically. It can be AES256GCM, ChaCha20Poly1305,
+    or simply _auto_ to let the program select the proper one.
+    (default auto)
+
+*-d*, *--decrypt*
+    Decrypt mode.
+
+*-o*, *--output*
+    Use as output file. If "-" is specified, write to stdout.
+    (default -)
+
+*-P*, *--passphrase*
+    Specify passphrase instead of prompting it.
+
+*--passphrase-file*
+    Use a file as passphrase, overriding _passphrase_ option. *Use it carefully!*
+
+*--stubborn*
+    In decryption, proceed at any cost regardless of any warning about the
+    risk of uncommon parameters set in the file.
+    You set the flag, you take the risk.
+
+*-h, --help*
+    Print this message and quit.
+
+*-v, --version*
+    Print version.
+
+The following options are for advanced usage and are only valid under encrypt
+mode. DO NOT specify these unless you have a good understanding of what you are
+doing!
+
+*--kd-N*
+    Power 2 of iterations for key derivation, recommended >=15.
+    [default 16 (2^16)]
+
+*--kd-r*
+    Memory factor for key derivation, recommended >=8.
+    (default 8)
+
+*--kd-p*
+    Parallelization factor for key derivation, recommended >=1.
+    (default to the number of CPUs)
+
+== EXAMPLES
+=== Encrypt
+  eae -o hentai.tgz.eae hentai.tgz
+
+=== Decrypt
+  eae -o hentai.tgz -d hentai.tgz.eae
+
+== RETURN VALUE
+* 0: success
+* 1: failed internally
+* 2: failed because of user input
+
+== AUTHOR
+Equim

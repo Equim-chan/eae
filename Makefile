@@ -106,6 +106,8 @@ vendor: Gopkg.lock Gopkg.toml
 resource.syso: versioninfo.json icon.ico
 	goversioninfo --icon icon.ico
 
+man/eae.1: doc/eae.1.adoc
+	asciidoctor -o - -b manpage $< | sed "s@$(date +"%Y-%m-%d")@$(date +"%B %Y")@" > $@
 
 .PHONY: pack
 pack: $(TITLE)-$(VERSION).tar.xz

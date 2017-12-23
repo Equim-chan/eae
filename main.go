@@ -43,6 +43,9 @@ Options:
       risk of uncommon parameters set in the file.
       You set the flag, you take the risk.
 
+  -h, --help
+      Print this message and quit.
+
   -v, --version
       Print version.
 
@@ -60,10 +63,6 @@ doing!
   --kd-p
       Parallelization factor for key derivation, recommended >=1.
       (default to the number of CPUs)
-
-Examples:
-  ` + Title + ` -o hentai.tgz.eae hentai.tgz
-  ` + Title + ` -o hentai.tgz -d hentai.tgz.eae
 `
 
 var stderr = log.New(os.Stderr, Title+": ", 0)

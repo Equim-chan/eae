@@ -107,23 +107,24 @@ resource.syso: versioninfo.json icon.ico
 	goversioninfo --icon icon.ico
 
 man/eae.1: doc/eae.1.adoc
-	asciidoctor -o - -b manpage $< | sed "s@$(date +"%Y-%m-%d")@$(date +"%B %Y")@" > $@
+	mkdir -p man
+	asciidoctor -o - -b manpage $< | sed "s@$(shell date +"%Y-%m-%d")@$(shell date +"%B %Y")@" > $@
 
 .PHONY: pack
 pack: $(TITLE)-$(VERSION).tar.xz
 
 # this target won't remove its dependancy
-$(TITLE)-$(VERSION).tar.xz: $(BIN)
+$(TITLE)-$(VERSION).tar.xz: $(BIN) LICENSE man/eae.1
 ifdef HAVE_UPX
 	@echo "  - UPX"
   ifdef VERBOSE
-	upx -9 $^
+	upx -9 $<
   else
-	@upx -q9 $^ > /dev/null
+	@upx -q9 $< > /dev/null
   endif
 endif
 	@echo "  - TAR | XZ"
-	$(AT)tar -cf - --mode="a+x" $< | xz -T0 -c9 - > $@
+	$(AT)tar -cf - --mode="a+x" $^ | xz -T0 -c9 - > $@
 
 # cross-building
 .PHONY: all
@@ -166,10 +167,10 @@ bench: $(PREPARE)
 .PHONY: clean
 clean:
 	go clean
-	@$(MAKE) -C i18n clean
 	$(RM) \
 		$(BIN) \
 		resource.syso \
+		man/eae.1 \
 		$(DIRNAME).tar.xz \
 		$(foreach p,$(PLATFORMS),$(DIRNAME)-$(p)*) \
 		$(DIRNAME)-*.sha256

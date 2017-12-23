@@ -2,6 +2,9 @@
 Equim <https://github.com/Equim-chan[@Equim-chan]>
 :tip-caption: :bulb:
 
+image:https://img.shields.io/github/release/Equim-chan/eae.svg[Release, link=https://github.com/Equim-chan/eae/releases/latest]
+image:https://img.shields.io/badge/BSD-3-blue.svg[License, link=https://github.com/Equim-chan/eae/blob/master/LICENSE]
+
 eae is a tiny CLI tool that helps encrypt/decrypt a single file using AEAD ciphers. The key is derived using https://www.tarsnap.com/scrypt/scrypt.pdf[scrypt]. AES256GCM and ChaCha20Poly1305 are supported.
 
 TIP: For further documents, please refer to eae(1).

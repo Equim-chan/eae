@@ -20,7 +20,7 @@ $ $GOPATH/bin/eae
 
 == Details
 === File format
-image:https://raw.github.com/Equim-chan/eae/master/file_format.svg?sanitize=true[figure]
+image:https://raw.github.com/Equim-chan/eae/master/file_format.png[figure]
 
 === Nonce counter
 First, we generate a 12-byte cryptographically strong pseudo-random slice as `nonceSeed`, and a slice `counter` of 12-byte zero. When a new chunk is to be processed, `nonce` will be `nonceSeed` XOR `counter`, and then counter will increases itself by 0x1 in little endian.

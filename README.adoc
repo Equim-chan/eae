@@ -24,7 +24,7 @@ $ $GOPATH/bin/eae
 image:https://raw.github.com/Equim-chan/eae/master/file_format.png[figure]
 
 === Nonce counter
-First, we generate a 12-byte cryptographically strong pseudo-random slice as `nonceSeed`, and a slice `counter` of 12-byte zero. When a new chunk is to be processed, `nonce` will be `nonceSeed` XOR `counter`, and then counter will increases itself by 0x1 in little endian.
+First, we generate a 12-byte cryptographically strong pseudo-random slice as `nonceSeed`, and a slice `counter` of 12-byte zero. When a new chunk is to be processed, `nonce` will be `nonceSeed` XOR `counter`, and then counter will increases itself by 0x1 in little endian. This is implemented in https://github.com/Equim-chan/eae/blob/master/lib/aeadstream/aeadstream.go[lib/aeadstream/aeadstream.go]
 
 Technically, when chunk size is 256KiB (as in eae), and nonce size is 12 bytes, one single _key_(not _passphrase_) can be used to process at most 2^54 EiB of data.
 

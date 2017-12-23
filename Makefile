@@ -25,9 +25,13 @@ HAVE_UPX := $(shell hash upx 2> /dev/null && echo 1)
 # build commands and flags
 GC := go build
 
-ifeq ($(GOOS),linux)
-  ifeq ($(shell env GOOS= go env GOOS),linux)
-    FLAGS += --buildmode pie
+ifeq ($(shell uname -s),Linux)
+  # native build?
+  ifeq ($(shell env GOOS=$(GOOS) go env GOOS),$(shell go env GOOS))
+    ifeq ($(shell env GOARCH=$(GOARCH) go env GOARCH),$(shell go env GOARCH))
+      FLAGS += --buildmode pie
+      BUILD_PIE := 1
+    endif
   else
     # static link
     CGO_ENABLED := 0
@@ -89,7 +93,10 @@ endif
 SRC := $(shell find . -path ./vendor -prune -o -name '*.go')
 SRC += Makefile
 PLATFORMS := linux-64 linux-32 windows-64 windows-32 macos
-PREPARE := vendor resource.syso
+PREPARE := vendor
+ifndef BUILD_PIE
+PREPARE += resource.syso
+endif
 
 $(BIN): $(PREPARE) $(SRC)
 	@test "$(GOOS)" -o "$(GOARCH)" -o "$(GOARM)" && echo -ne "  "; \
@@ -98,6 +105,7 @@ $(BIN): $(PREPARE) $(SRC)
 	test "$(GOARM)" && echo -ne "\x1b[35mGOARM=$(GOARM) "; \
 	test "$(GOOS)" -o "$(GOARCH)" -o "$(GOARM)" && echo -ne "\n"; \
 	echo -e "\x1b[0m  - \x1b[1;36mGC\x1b[0m"
+	@test "$(BUILD_PIE)" && $(RM) resource.syso || true
 	$(AT)$(GC) -o $@ $(FLAGS) --gcflags "$(GCFLAGS)" --asmflags "$(ASMFLAGS)" --ldflags "$(LDFLAGS)" $(PKG)
 
 vendor: Gopkg.lock Gopkg.toml

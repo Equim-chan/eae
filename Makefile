@@ -25,16 +25,15 @@ HAVE_UPX := $(shell hash upx 2> /dev/null && echo 1)
 # build commands and flags
 GC := go build
 
+# determine whether enable pie or not
+CGO_ENABLED := 0
 ifeq ($(shell uname -s),Linux)
   # native build?
   ifeq ($(shell env GOOS=$(GOOS) go env GOOS),$(shell go env GOOS))
     ifeq ($(shell env GOARCH=$(GOARCH) go env GOARCH),$(shell go env GOARCH))
       FLAGS += --buildmode pie
-      BUILD_PIE := 1
+      CGO_ENABLED := 1
     endif
-  else
-    # static link
-    CGO_ENABLED := 0
   endif
 endif
 
@@ -79,7 +78,7 @@ BIN := $(TITLE)$(GOEXE)
 PREFIX := $(GOPATH)/bin
 
 define magic
-  SUFFIX=$1 $(shell test "$(RELEASE)" && echo "pack")
+  SUFFIX=$1 $(shell test "$(RELEASE)" && echo "RELEASE=1 pack")
 endef
 
 ifdef V
@@ -105,7 +104,7 @@ $(BIN): $(PREPARE) $(SRC)
 	test "$(GOARM)" && echo -ne "\x1b[35mGOARM=$(GOARM) "; \
 	test "$(GOOS)" -o "$(GOARCH)" -o "$(GOARM)" && echo -ne "\n"; \
 	echo -e "\x1b[0m  - \x1b[1;36mGC\x1b[0m"
-	@test "$(BUILD_PIE)" && $(RM) resource.syso || true # sadly this is a known bug, and we can no longer use the `-j' flag
+	@test "$(CGO_ENABLED)" -eq 1 && $(RM) resource.syso || true # sadly this is a known bug, and we can no longer use the `-j' flag
 	$(AT)$(GC) -o $@ $(FLAGS) --gcflags "$(GCFLAGS)" --asmflags "$(ASMFLAGS)" --ldflags "$(LDFLAGS)" $(PKG)
 
 vendor: Gopkg.lock Gopkg.toml

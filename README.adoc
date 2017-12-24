@@ -26,6 +26,8 @@ $ $GOPATH/bin/eae
 
 == Details
 === File format
+The following values are all in little endian.
+
 image::https://raw.github.com/Equim-chan/eae/master/file_format.png[figure]
 
 === Nonce counter

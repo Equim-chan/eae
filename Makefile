@@ -89,13 +89,9 @@ ifndef VERBOSE
 endif
 
 #####################################################################
-SRC := $(shell find . -path ./vendor -prune -o -name '*.go')
-SRC += Makefile
+SRC := $(shell find . -path ./vendor -prune -o -name '*.go') Makefile
 PLATFORMS := linux-64 linux-32 windows-64 windows-32 macos
-PREPARE := vendor
-ifndef BUILD_PIE
-PREPARE += resource.syso
-endif
+PREPARE := vendor resource_windows.syso
 
 $(BIN): $(PREPARE) $(SRC)
 	@test "$(GOOS)" -o "$(GOARCH)" -o "$(GOARM)" && echo -ne "  "; \
@@ -104,24 +100,31 @@ $(BIN): $(PREPARE) $(SRC)
 	test "$(GOARM)" && echo -ne "\x1b[35mGOARM=$(GOARM) "; \
 	test "$(GOOS)" -o "$(GOARCH)" -o "$(GOARM)" && echo -ne "\n"; \
 	echo -e "\x1b[0m  - \x1b[1;36mGC\x1b[0m"
-	@test "$(CGO_ENABLED)" -eq 1 && $(RM) resource.syso || true # sadly this is a known bug, and we can no longer use the `-j' flag
 	$(AT)$(GC) -o $@ $(FLAGS) --gcflags "$(GCFLAGS)" --asmflags "$(ASMFLAGS)" --ldflags "$(LDFLAGS)" $(PKG)
 
 vendor: Gopkg.lock Gopkg.toml
 	dep ensure -v
 
-resource.syso: versioninfo.json icon.ico
-	goversioninfo --icon icon.ico
+resource_windows.syso: versioninfo.json icon.ico
+	goversioninfo -o $@ --icon icon.ico versioninfo.json
 
-man/eae.1: doc/eae.1.adoc
-	mkdir -p man
-	asciidoctor -o - -b manpage $< | sed "s@$(shell date +"%Y-%m-%d")@$(shell date +"%B %Y")@" | sed 's/\&.br/\.br/' > $@
+doc/%.1.html: doc/%.1.adoc
+	asciidoctor -o $@ -b manpage $<
+
+man:
+	mkdir -p $@
+
+man/%.1: doc/%.1.adoc man
+	asciidoctor -o - -b manpage $< | \
+		sed "s@$(shell date +"%Y-%m-%d")@$(shell date +"%B %Y")@" | \
+		sed 's/\&.br/\.br/' \
+		> $@
 
 .PHONY: pack
 pack: $(TITLE)-$(VERSION).tar.xz
 
 # this target won't remove its dependancy
-$(TITLE)-$(VERSION).tar.xz: $(BIN) LICENSE man/eae.1
+$(TITLE)-$(VERSION).tar.xz: $(BIN) LICENSE
 ifdef HAVE_UPX
 	@echo "  - UPX"
   ifdef VERBOSE
@@ -174,10 +177,11 @@ bench: $(PREPARE)
 .PHONY: clean
 clean:
 	go clean
+	$(RM) -r man
 	$(RM) \
 		$(BIN) \
-		resource.syso \
-		man/eae.1 \
+		resource_windows.syso \
+		doc/*.html \
 		$(DIRNAME).tar.xz \
 		$(foreach p,$(PLATFORMS),$(DIRNAME)-$(p)*) \
 		$(DIRNAME)-*.sha256

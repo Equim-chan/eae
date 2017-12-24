@@ -105,7 +105,7 @@ $(BIN): $(PREPARE) $(SRC)
 	test "$(GOARM)" && echo -ne "\x1b[35mGOARM=$(GOARM) "; \
 	test "$(GOOS)" -o "$(GOARCH)" -o "$(GOARM)" && echo -ne "\n"; \
 	echo -e "\x1b[0m  - \x1b[1;36mGC\x1b[0m"
-	@test "$(BUILD_PIE)" && $(RM) resource.syso || true
+	@test "$(BUILD_PIE)" && $(RM) resource.syso || true # sadly this is a known bug, and we can no longer use the `-j' flag
 	$(AT)$(GC) -o $@ $(FLAGS) --gcflags "$(GCFLAGS)" --asmflags "$(ASMFLAGS)" --ldflags "$(LDFLAGS)" $(PKG)
 
 vendor: Gopkg.lock Gopkg.toml

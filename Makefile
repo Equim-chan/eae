@@ -91,7 +91,7 @@ endif
 #####################################################################
 SRC := $(shell find . -path ./vendor -prune -o -name '*.go') Makefile
 PLATFORMS := linux-64 linux-32 windows-64 windows-32 macos
-PREPARE := vendor resource_windows.syso
+PREPARE := vendor resource_windows_386.syso resource_windows_amd64.syso
 
 $(BIN): $(PREPARE) $(SRC)
 	@test "$(GOOS)" -o "$(GOARCH)" -o "$(GOARM)" && echo -ne "  "; \
@@ -105,8 +105,8 @@ $(BIN): $(PREPARE) $(SRC)
 vendor: Gopkg.lock Gopkg.toml
 	dep ensure -v
 
-resource_windows.syso: versioninfo.json icon.ico
-	goversioninfo -o $@ --icon icon.ico versioninfo.json
+resource_windows_386.syso resource_windows_amd64.syso: versioninfo.json icon.ico
+	goversioninfo --platform-specific --icon icon.ico versioninfo.json
 
 doc/%.1.html: doc/%.1.adoc
 	asciidoctor -o $@ -b manpage $<
@@ -180,7 +180,7 @@ clean:
 	$(RM) -r man
 	$(RM) \
 		$(BIN) \
-		resource_windows.syso \
+		*.syso \
 		doc/*.html \
 		$(DIRNAME).tar.xz \
 		$(foreach p,$(PLATFORMS),$(DIRNAME)-$(p)*) \

@@ -1,5 +1,5 @@
 // eae: A simple file encrypt/decrypt tool.
-package main
+package main // import "ekyu.moe/eae"
 
 //go:generate goversioninfo -icon=icon.ico
 

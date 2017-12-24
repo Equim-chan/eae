@@ -1,5 +1,5 @@
 // Package aeadstream implements streams on AEAD ciphers.
-package aeadstream
+package aeadstream // import "ekyu.moe/eae/lib/aeadstream"
 
 import (
 	"crypto/cipher"

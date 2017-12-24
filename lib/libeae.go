@@ -1,4 +1,4 @@
-package libeae
+package libeae // import "ekyu.moe/eae/lib"
 
 const (
 	KeySize   = 32

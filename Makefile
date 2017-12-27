@@ -27,12 +27,14 @@ GC := go build
 
 # determine whether enable pie or not
 CGO_ENABLED := 0
-ifeq ($(shell uname -s),Linux)
+ifeq ($(shell test $(shell go env GOOS) = linux -o $(shell go env GOOS)/$(shell go env GOARCH) = darwin/amd64; echo $$?),0)
   # native build?
   ifeq ($(shell env GOOS=$(GOOS) go env GOOS),$(shell go env GOOS))
     ifeq ($(shell env GOARCH=$(GOARCH) go env GOARCH),$(shell go env GOARCH))
-      FLAGS += --buildmode pie
-      CGO_ENABLED := 1
+      ifeq ($(shell env GOARM=$(GOARM) go env GOARM),$(shell go env GOARM))
+        FLAGS += --buildmode pie
+        CGO_ENABLED := 1
+      endif
     endif
   endif
 endif
